@@ -73,3 +73,18 @@ match `main` pixel for pixel.
 
 - Static single index.html (vercel.json rewrites everything to index.html), so CSS + detection script are inlined in <head>. No dock/banner existed.
 - TODO(CWI): no login.
+
+## bSocial phone app (static page)
+
+`index.html` is a static page, so the kit is inlined as vanilla JS/CSS:
+
+- The head script sets `html.bw-mobile-app` before first paint when compact
+  (bWallet UA, `window.CWI`, `?inwallet=1`, or width <= 768px). The script at
+  the end of `<body>` then removes `#desktop` (header, hero, footer) from the
+  DOM and mounts the phone app in `#bxm-mount`. Desktop is untouched.
+- Identity colour: sky `#0ea5e9`, plus gold `#F5B800` on black.
+- Feed: Bitcoin Schema posts from `https://bmap-api-production.up.railway.app/social/feed`
+  (paged). Tap an author to open their profile (`/social/post/address/{address}`).
+- Post: builds a `B` + `MAP` (`app=bsocial`, `type=post`) OP_RETURN and calls
+  `window.CWI.createAction`. Without a wallet the post is saved on the device only.
+- Sign-in: silent `getPublicKey({ identityKey: true })`, stored as `bwallet_cwi_user`.
