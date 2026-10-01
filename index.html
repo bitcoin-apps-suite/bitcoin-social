@@ -127,8 +127,130 @@
             }
         }
     </style>
+    <style>
+/* mobile-bwallet.css (inlined: vercel.json only serves index.html) */
+/*
+ * Mobile / bWallet shell overrides (see MOBILE-BWALLET.md).
+ * Everything is scoped to html.bw-compact or html.bw-inwallet, which are only
+ * set on <=768px viewports or inside bWallet, so desktop is unchanged.
+ */
+
+/* 1. No Bitcoin OS dock, no proof-of-concept banner, no dev sidebar */
+html.bw-compact .poc-banner,
+html.bw-compact .poc-bar,
+html.bw-compact .minimal-dock,
+html.bw-compact .minimal-dock-container,
+html.bw-compact .bitcoin-dock,
+html.bw-compact .dev-sidebar {
+  display: none !important;
+}
+/* Same, without JS (first paint on phones) */
+@media (max-width: 768px) {
+  .poc-banner,
+  .poc-bar,
+  .minimal-dock,
+  .minimal-dock-container,
+  .bitcoin-dock,
+  .dev-sidebar {
+    display: none !important;
+  }
+}
+
+/* 2. Remove the space reserved for the banner / dock */
+html.bw-compact body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+html.bw-compact .app-with-sidebar {
+  margin-left: 0 !important;
+}
+
+/* 3. No horizontal page scroll (the sheet grid scrolls inside itself) */
+html.bw-compact,
+html.bw-compact body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+html.bw-compact #root {
+  max-width: 100vw;
+  overflow-x: clip;
+}
+
+/* 4. Safe areas (notch / home indicator) */
+html.bw-compact .App-header {
+  padding-top: max(8px, env(safe-area-inset-top));
+}
+
+/* 5. Touch targets >= 44px */
+html.bw-compact button,
+html.bw-compact [role='button'],
+html.bw-compact .nav-btn,
+html.bw-compact .connect-badge-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+html.bw-compact input,
+html.bw-compact select,
+html.bw-compact textarea {
+  font-size: 16px; /* stops iOS zoom-on-focus */
+}
+
+/* 6. Compact header: one title row + one Connect control */
+html.bw-compact .App-header {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+html.bw-compact .mobile-header-wrapper {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+html.bw-compact .desktop-header-wrapper,
+html.bw-compact .desktop-user-info {
+  display: none !important;
+}
+html.bw-compact .mobile-header-title h1 {
+  font-size: 18px !important;
+  margin: 0;
+  white-space: nowrap;
+}
+html.bw-compact .mobile-header-title img {
+  width: 28px !important;
+  height: 28px !important;
+  margin-right: 8px !important;
+}
+/* duplicate "Connect" block under the title */
+html.bw-compact .mobile-user-info {
+  display: none !important;
+}
+
+/* 7. Floating AI chat button sits above the bottom toolbar */
+html.bw-compact .claude-chat-button {
+  bottom: calc(150px + env(safe-area-inset-bottom)) !important; /* clears both bottom bars */
+  right: 12px !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+
+    </style>
+    <script>
+    /* Mobile / bWallet shell (see MOBILE-BWALLET.md): sets html.bw-inwallet / html.bw-compact */
+    (function () {
+      var r = document.documentElement;
+      function inWallet() { return /\bbWallet\//.test(navigator.userAgent) || !!window.CWI || new URLSearchParams(location.search).get('inwallet') === '1'; }
+      function compact() { return inWallet() || innerWidth <= 768; }
+      function update() { r.classList.toggle('bw-inwallet', inWallet()); r.classList.toggle('bw-compact', compact()); }
+      update(); addEventListener('resize', update);
+      /* Decided once before first paint: the phone app replaces the desktop page. */
+      if (compact()) r.classList.add('bw-mobile-app');
+    })();
+    </script>
 </head>
 <body>
+<div id="desktop">
     <header>
         <div class="container">
             <div class="logo">₿ Bitcoin Social</div>
@@ -165,5 +287,265 @@
             <p>Building the future, one block at a time.</p>
         </div>
     </footer>
+</div>
+<style>
+/* bSocial phone app (see MOBILE-BWALLET.md). Black, gold #F5B800, sky #0ea5e9. */
+html.bw-mobile-app #desktop { display: none !important; }
+html.bw-mobile-app, html.bw-mobile-app body { overflow: hidden; overscroll-behavior: none; background: #000; max-width: 100vw; min-height: 0; }
+.bxm-root {
+  --bg: #000; --surface: #0d0d0f; --surface-2: #17171a; --line: #26262b; --text: #f2f2f2; --muted: #8a8a92;
+  --gold: #F5B800; --sky: #0ea5e9;
+  --top: calc(52px + env(safe-area-inset-top)); --actions: calc(60px + env(safe-area-inset-bottom));
+  position: fixed; inset: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.4 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  overflow: hidden; -webkit-tap-highlight-color: transparent; z-index: 1;
+}
+.bxm-root * { box-sizing: border-box; }
+.bxm-root button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.bxm-topbar { position: absolute; top: 0; left: 0; right: 0; height: var(--top); z-index: 5;
+  padding: env(safe-area-inset-top) max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+  display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,.92); border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.bxm-logo { width: 32px; height: 32px; border-radius: 9px; margin: 0 6px; flex: none; display: grid; place-items: center; background: var(--sky); color: #000; font-size: 18px; font-weight: 800; }
+.bxm-title { flex: 1; min-width: 0; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bxm-user { max-width: 42%; font-size: 13px; color: var(--sky); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 6px 10px; border: 1px solid rgba(14,165,233,.4); border-radius: 999px; }
+.bxm-icon-btn { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; line-height: 1; color: var(--gold) !important; border-radius: 10px; }
+.bxm-pill { min-height: 44px; min-width: 44px; padding: 0 14px; border-radius: 999px; background: var(--gold) !important; color: #000 !important; font-weight: 600 !important; }
+.bxm-main { position: absolute; top: var(--top); bottom: var(--actions); left: 0; right: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  padding: 12px max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left)); }
+.bxm-post { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+.bxm-post-head { display: flex; align-items: center; gap: 10px; min-height: 44px; width: 100%; text-align: left; }
+.bxm-avatar { width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700; color: #000; background: var(--sky); }
+.bxm-name { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bxm-meta { font-size: 12px; color: var(--muted); }
+.bxm-body { margin-top: 6px; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+.bxm-body a { color: var(--sky); }
+.bxm-tx { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; color: var(--muted); text-decoration: none; }
+.bxm-tag { font-size: 11px; color: var(--gold); border: 1px solid rgba(245,184,0,.4); border-radius: 999px; padding: 1px 8px; margin-left: 6px; }
+.bxm-center { text-align: center; color: var(--muted); padding: 18vh 12px 0; }
+.bxm-primary { margin-top: 12px; min-height: 48px; padding: 0 24px; border-radius: 14px; background: var(--gold) !important; color: #000 !important; font-weight: 700 !important; }
+.bxm-more { width: 100%; min-height: 48px; border: 1px solid var(--line) !important; border-radius: 14px; color: var(--sky) !important; }
+.bxm-profile { display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; }
+.bxm-profile .bxm-avatar { width: 56px; height: 56px; font-size: 22px; }
+.bxm-addr { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.bxm-compose textarea { width: 100%; min-height: 40vh; resize: none; padding: 14px; border-radius: 14px; background: var(--surface); color: var(--text); border: 1px solid var(--line); font: inherit; font-size: 16px; outline: none; }
+.bxm-compose textarea:focus { border-color: var(--gold); }
+.bxm-count { text-align: right; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.bxm-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.bxm-actionbar { position: absolute; left: 0; right: 0; bottom: 0; height: var(--actions); z-index: 5; display: flex;
+  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: rgba(0,0,0,.95); border-top: 1px solid var(--line); }
+.bxm-action { flex: 1; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px !important; font-weight: 600 !important; }
+.bxm-action-icon { font-size: 20px; line-height: 1; color: var(--sky); }
+.bxm-action.on { color: var(--sky) !important; }
+.bxm-action-gold .bxm-action-icon { color: var(--gold); }
+.bxm-action:disabled { opacity: .35; }
+.bxm-toast { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(var(--actions) + 12px); max-width: 90vw; text-align: center; background: var(--gold); color: #000; font-weight: 700; padding: 10px 18px; border-radius: 999px; z-index: 10; }
+</style>
+<div id="bxm-mount"></div>
+<script>
+/* bSocial phone app. Only runs when the head script set html.bw-mobile-app. */
+(function () {
+  var root = document.documentElement;
+  if (!root.classList.contains('bw-mobile-app')) return;
+  var desktop = document.getElementById('desktop');
+  if (desktop) desktop.remove(); /* not rendered on phones / in bWallet */
+
+  var API = 'https://bmap-api-production.up.railway.app';
+  var USER_KEY = 'bwallet_cwi_user';
+  var LOCAL_KEY = 'bsocial_my_posts';
+  var B_PREFIX = '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut';
+  var MAP_PREFIX = '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5';
+  var PAGE = 20;
+
+  var state = { view: 'feed', posts: [], page: 1, loading: false, error: '', done: false,
+    profile: null, profilePosts: [], user: null, signingIn: false, draft: '', toast: '' };
+
+  function getCWI() { var c = window.CWI; return c && typeof c.getPublicKey === 'function' ? c : null; }
+  function storedUser() { try { var r = localStorage.getItem(USER_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  function myPosts() { try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch (e) { return []; } }
+  function saveMyPosts(list) { try { localStorage.setItem(LOCAL_KEY, JSON.stringify(list.slice(0, 200))); } catch (e) { /* storage blocked */ } }
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function linkify(t) { return esc(t).replace(/https?:\/\/[^\s<]+/g, function (u) { return '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u + '</a>'; }); }
+  function short(a) { return a && a.length > 12 ? a.slice(0, 6) + '…' + a.slice(-4) : (a || ''); }
+  function ago(ms) {
+    if (!ms) return '';
+    var s = Math.max(0, (Date.now() - ms) / 1000);
+    if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h';
+    return new Date(ms).toLocaleDateString();
+  }
+  function withTimeout(p, ms) { return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, ms); })]); }
+
+  /* Normalise a bmap-api Bitcoin Schema record. */
+  function norm(r) {
+    var map = (r.MAP && r.MAP[0]) || {}, b = (r.B && r.B[0]) || {}, aip = (r.AIP && r.AIP[0]) || {};
+    var t = r.timestamp || (map.treechat_created_at ? Date.parse(map.treechat_created_at) : 0) || (r.blk && r.blk.t ? r.blk.t * 1000 : 0);
+    return { id: (r.tx && r.tx.h) || r._id, text: b.content || '', name: map.username || map.name || short(aip.address), address: aip.address || '',
+      app: map.app || '', time: t, block: r.blk ? r.blk.i : null };
+  }
+
+  function load(reset) {
+    if (state.loading) return;
+    if (reset) { state.page = 1; state.posts = []; state.done = false; }
+    state.loading = true; state.error = ''; render();
+    fetch(API + '/social/feed?limit=' + PAGE + '&page=' + state.page)
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) {
+        var list = (j.results || []).map(norm).filter(function (p) { return p.text; });
+        state.posts = state.posts.concat(list); state.page += 1; state.done = (j.results || []).length < PAGE;
+      })
+      .catch(function (e) { state.error = 'Could not load the feed (' + e.message + ').'; })
+      .then(function () { state.loading = false; render(); });
+  }
+
+  function openProfile(address, name) {
+    state.view = 'profile'; state.profile = { address: address, name: name }; state.profilePosts = []; state.loading = true; render();
+    fetch(API + '/social/post/address/' + encodeURIComponent(address) + '?limit=' + PAGE)
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { state.profilePosts = (j.results || []).map(norm).filter(function (p) { return p.text; }); })
+      .catch(function () { state.error = 'Could not load this profile.'; })
+      .then(function () { state.loading = false; render(); });
+  }
+
+  /* ---- Composer: Bitcoin Schema post (B + MAP) via BRC-100 createAction ---- */
+  function utf8(s) { return new TextEncoder().encode(s); }
+  function hex(bytes) { var o = ''; for (var i = 0; i < bytes.length; i++) o += (bytes[i] < 16 ? '0' : '') + bytes[i].toString(16); return o; }
+  function push(bytes) {
+    var n = bytes.length, h;
+    if (n < 76) h = [n]; else if (n < 256) h = [0x4c, n]; else if (n < 65536) h = [0x4d, n & 255, n >> 8]; else h = [0x4e, n & 255, (n >> 8) & 255, (n >> 16) & 255, n >>> 24];
+    return hex(h) + hex(bytes);
+  }
+  function postScript(text) {
+    var parts = [B_PREFIX, text, 'text/markdown', 'UTF-8', '|', MAP_PREFIX, 'SET', 'app', 'bsocial', 'type', 'post'];
+    return '006a' + parts.map(function (p) { return push(utf8(p)); }).join('');
+  }
+
+  function publish() {
+    var text = state.draft.trim();
+    if (!text) return;
+    var cwi = getCWI();
+    var entry = { id: '', text: text, name: state.user ? state.user.handle : 'Me', address: '', app: 'bsocial', time: Date.now(), local: true };
+    if (cwi && typeof cwi.createAction === 'function') {
+      flash('Posting…');
+      cwi.createAction({ description: 'bSocial post', outputs: [{ lockingScript: postScript(text), satoshis: 0, outputDescription: 'Bitcoin Schema post' }] })
+        .then(function (res) {
+          entry.id = (res && res.txid) || ''; entry.local = !entry.id;
+          saveMyPosts([entry].concat(myPosts())); state.draft = ''; state.view = 'me';
+          flash(entry.id ? 'Posted on-chain' : 'Saved'); render();
+        })
+        .catch(function (e) { flash(e && e.message ? 'Not posted: ' + e.message : 'Not posted'); });
+    } else {
+      saveMyPosts([entry].concat(myPosts())); state.draft = ''; state.view = 'me';
+      flash('Saved as a draft (open in bWallet to post)'); render();
+    }
+  }
+
+  function flash(m) { state.toast = m; render(); setTimeout(function () { if (state.toast === m) { state.toast = ''; render(); } }, 2200); }
+
+  /* Silent BRC-100 sign-in inside bWallet: no chooser, no modal. */
+  function signIn() {
+    var cwi = getCWI(); if (!cwi) return;
+    state.signingIn = true; render();
+    var p = (cwi.waitForAuthentication ? cwi.waitForAuthentication({}) : Promise.resolve())
+      .then(function () { return cwi.getPublicKey({ identityKey: true }); })
+      .then(function (r) {
+        var pk = r.publicKey;
+        var u = { handle: pk.slice(0, 6) + '…' + pk.slice(-4), paymail: '', publicKey: pk, displayName: 'bWallet' };
+        try { localStorage.setItem(USER_KEY, JSON.stringify(u)); } catch (e) { /* storage blocked */ }
+        state.user = u;
+      });
+    withTimeout(p, 10000).catch(function (e) { console.warn('bWallet silent sign-in failed', e); })
+      .then(function () { state.signingIn = false; render(); });
+  }
+
+  function postHTML(p) {
+    var initial = esc((p.name || '?').replace(/^[@$]/, '').charAt(0).toUpperCase() || '?');
+    var head = p.address
+      ? '<button class="bxm-post-head" data-profile="' + esc(p.address) + '" data-name="' + esc(p.name) + '">'
+      : '<div class="bxm-post-head">';
+    return '<article class="bxm-post">' + head +
+      '<span class="bxm-avatar">' + initial + '</span><span style="min-width:0;display:flex;flex-direction:column">' +
+      '<span class="bxm-name">' + esc(p.name) + (p.local ? '<span class="bxm-tag">draft</span>' : '') + '</span>' +
+      '<span class="bxm-meta">' + esc(ago(p.time)) + (p.app ? ' · ' + esc(p.app) : '') + '</span></span>' +
+      (p.address ? '</button>' : '</div>') +
+      '<div class="bxm-body">' + linkify(p.text) + '</div>' +
+      (p.id ? '<a class="bxm-tx" href="https://whatsonchain.com/tx/' + esc(p.id) + '" target="_blank" rel="noopener noreferrer">tx ' + esc(short(p.id)) + ' ↗</a>' : '') +
+      '</article>';
+  }
+
+  function list(posts, empty) {
+    if (!posts.length) return '<div class="bxm-center">' + (state.loading ? 'Loading…' : esc(state.error || empty)) + '</div>';
+    return posts.map(postHTML).join('');
+  }
+
+  function render() {
+    var v = state.view, u = state.user, title, left, body;
+    left = v === 'profile' || v === 'compose' ? '<button class="bxm-icon-btn" data-act="back" aria-label="Back">‹</button>' : '<span class="bxm-logo" aria-hidden="true">b</span>';
+    if (v === 'feed') {
+      title = 'bSocial';
+      body = list(state.posts, 'No posts yet') +
+        (state.posts.length && !state.done ? '<button class="bxm-more" data-act="more">' + (state.loading ? 'Loading…' : 'Load more') + '</button>' : '') +
+        (state.posts.length && state.error ? '<p class="bxm-note">' + esc(state.error) + '</p>' : '');
+    } else if (v === 'profile') {
+      var pr = state.profile;
+      title = pr.name;
+      body = '<div class="bxm-profile"><span class="bxm-avatar">' + esc(pr.name.charAt(0).toUpperCase()) + '</span><div style="min-width:0"><div class="bxm-name">' + esc(pr.name) + '</div><div class="bxm-addr">' + esc(pr.address) + '</div></div></div>' +
+        list(state.profilePosts, 'No posts from this address');
+    } else if (v === 'me') {
+      title = 'My posts';
+      body = '<div class="bxm-profile"><span class="bxm-avatar">' + (u ? 'b' : '?') + '</span><div style="min-width:0"><div class="bxm-name">' + esc(u ? u.handle : 'Not signed in') + '</div><div class="bxm-addr">' + esc(u ? u.publicKey : 'Open bSocial in bWallet to sign in') + '</div></div></div>' +
+        (myPosts().length ? myPosts().map(postHTML).join('') : '<div class="bxm-center" style="padding-top:8vh">Nothing posted yet<br><button class="bxm-primary" data-act="compose">Write a post</button></div>');
+    } else {
+      title = 'New post';
+      body = '<div class="bxm-compose"><textarea id="bxm-text" maxlength="1000" placeholder="What’s happening on Bitcoin?">' + esc(state.draft) + '</textarea>' +
+        '<div class="bxm-count">' + state.draft.length + '/1000</div>' +
+        '<p class="bxm-note">' + (getCWI() && getCWI().createAction ? 'Posts are Bitcoin Schema (B + MAP) transactions paid by bWallet.' : 'No wallet here: the post is saved on this device only.') + '</p></div>';
+    }
+    var userEl = u ? '<span class="bxm-user" title="' + esc(u.publicKey) + '">' + esc(u.handle) + '</span>'
+      : state.signingIn ? '<span class="bxm-user">Signing in…</span>' : '';
+    if (v === 'compose') userEl = '<button class="bxm-pill" data-act="publish"' + (state.draft.trim() ? '' : ' disabled style="opacity:.4"') + '>Post</button>';
+    var mount = document.getElementById('bxm-mount');
+    var focused = document.activeElement && document.activeElement.id === 'bxm-text';
+    var caret = focused ? document.activeElement.selectionStart : null;
+    var scroll = mount.querySelector('.bxm-main'); var st = scroll ? scroll.scrollTop : 0; var prevView = mount.getAttribute('data-view');
+    mount.innerHTML = '<div class="bxm-root">' +
+      '<header class="bxm-topbar">' + left + '<div class="bxm-title">' + esc(title) + '</div>' + userEl + '</header>' +
+      '<main class="bxm-main" data-testid="main">' + body + '</main>' +
+      '<nav class="bxm-actionbar">' +
+        '<button class="bxm-action' + (v === 'feed' ? ' on' : '') + '" data-act="feed"><span class="bxm-action-icon">≡</span>Feed</button>' +
+        '<button class="bxm-action' + (v === 'me' ? ' on' : '') + '" data-act="me"><span class="bxm-action-icon">◉</span>Profile</button>' +
+        '<button class="bxm-action bxm-action-gold" data-act="compose"><span class="bxm-action-icon">＋</span>Post</button>' +
+      '</nav>' + (state.toast ? '<div class="bxm-toast" role="status">' + esc(state.toast) + '</div>' : '') + '</div>';
+    mount.setAttribute('data-view', v);
+    var m = mount.querySelector('.bxm-main'); if (prevView === v) m.scrollTop = st;
+    var ta = document.getElementById('bxm-text');
+    if (ta && focused) { ta.focus(); ta.setSelectionRange(caret, caret); }
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-act],[data-profile]') : null;
+    if (!t || !document.getElementById('bxm-mount').contains(t)) return;
+    if (t.getAttribute('data-profile')) { openProfile(t.getAttribute('data-profile'), t.getAttribute('data-name')); return; }
+    var a = t.getAttribute('data-act');
+    if (a === 'feed' || a === 'back') { state.view = 'feed'; state.error = ''; if (!state.posts.length) load(true); else render(); }
+    else if (a === 'more') load(false);
+    else if (a === 'me') { state.view = 'me'; render(); }
+    else if (a === 'compose') { state.view = 'compose'; render(); var ta = document.getElementById('bxm-text'); if (ta) ta.focus(); }
+    else if (a === 'publish') publish();
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id !== 'bxm-text') return;
+    state.draft = e.target.value;
+    var c = document.querySelector('.bxm-count'); if (c) c.textContent = state.draft.length + '/1000';
+    var b = document.querySelector('[data-act="publish"]');
+    if (b) { var ok = !!state.draft.trim(); b.disabled = !ok; b.style.opacity = ok ? '' : '.4'; }
+  });
+
+  state.user = storedUser();
+  render();
+  load(true);
+  if (!state.user) signIn();
+})();
+</script>
+
 </body>
 </html>
