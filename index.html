@@ -1,169 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Social - Connect with the Bitcoin Community</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        header {
-            padding: 2rem 0;
-            text-align: center;
-            color: white;
-        }
-        
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .tagline {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        
-        .hero {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 2rem 0;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            color: #666;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #f7931a, #ff6b35);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-        
-        .feature {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .feature h3 {
-            color: #f7931a;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-        
-        .feature p {
-            color: #666;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 3rem 0;
-            color: white;
-            opacity: 0.8;
-        }
-        
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .hero {
-                padding: 2rem;
-                margin: 1rem 0;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>bSocial</title>
+  <meta name="description" content="Post to Bitcoin with your bWalletX. Every post is a real on-chain transaction that you sign and pay for in your own wallet.">
+  <meta name="theme-color" content="#000000">
+  <style>
+    :root { --bg: #000; --card: #111; --line: #222; --text: #f5f5f5; --muted: #9a9a9a; --gold: #e6b325; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 48px; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; padding-top: max(16px, env(safe-area-inset-top)); border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); z-index: 2; }
+    .logo { font-weight: 800; font-size: 1.25rem; }
+    .logo span { color: var(--gold); }
+    button { font: inherit; cursor: pointer; border: 0; border-radius: 999px; padding: 10px 16px; min-height: 44px; font-weight: 600; }
+    .primary { background: var(--gold); color: #000; }
+    .ghost { background: #1c1c1c; color: var(--text); }
+    button:disabled { opacity: .5; cursor: default; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-top: 16px; }
+    textarea { width: 100%; min-height: 110px; background: #000; color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; font-size: 16px; resize: vertical; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .muted { color: var(--muted); font-size: .9rem; }
+    .err { color: #ff7a7a; font-size: .9rem; margin-top: 8px; }
+    .post { border-top: 1px solid var(--line); padding: 14px 0; }
+    .post:first-child { border-top: 0; }
+    .post p { white-space: pre-wrap; word-break: break-word; }
+    a { color: var(--gold); }
+    h2 { font-size: 1rem; margin-bottom: 8px; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
+  <div class="wrap">
     <header>
-        <div class="container">
-            <div class="logo">₿ Bitcoin Social</div>
-            <div class="tagline">Connect, Share, and Build the Future of Money</div>
-        </div>
+      <div class="logo"><span>b</span>Social</div>
+      <button id="signin" class="primary">Sign in with bWalletX</button>
     </header>
 
-    <main class="container">
-        <section class="hero">
-            <h1>Welcome to Bitcoin Social</h1>
-            <p>The premier social platform for Bitcoin enthusiasts, developers, and innovators. Join a community that's building the future of decentralized finance.</p>
-            <a href="#" class="cta-button">Join the Community</a>
-        </section>
+    <section id="signed-out" class="card">
+      <h2>Post to Bitcoin</h2>
+      <p class="muted">Sign in with bWalletX (or any BRC-100 wallet). Each post is a real on-chain transaction: your wallet shows the cost and you approve it. We never hold your keys or your money.</p>
+    </section>
 
-        <section class="features">
-            <div class="feature">
-                <h3>🚀 Innovation Hub</h3>
-                <p>Discover the latest Bitcoin projects, technologies, and innovations from the brightest minds in the space.</p>
-            </div>
-            <div class="feature">
-                <h3>🤝 Community Driven</h3>
-                <p>Connect with like-minded individuals, share ideas, and collaborate on the next big Bitcoin breakthrough.</p>
-            </div>
-            <div class="feature">
-                <h3>📚 Educational Resources</h3>
-                <p>Access curated content, tutorials, and discussions to deepen your Bitcoin knowledge and skills.</p>
-            </div>
-        </section>
-    </main>
+    <section id="composer" class="card hidden">
+      <textarea id="text" maxlength="5000" placeholder="What's happening?"></textarea>
+      <div class="row">
+        <span class="muted" id="who"></span>
+        <button id="post" class="primary">Post</button>
+      </div>
+      <div id="post-error" class="err hidden"></div>
+    </section>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Bitcoin Social. Part of the Bitcoin Apps Suite.</p>
-            <p>Building the future, one block at a time.</p>
-        </div>
-    </footer>
+    <section class="card">
+      <h2>Your posts</h2>
+      <div id="mine"><p class="muted">No posts yet.</p></div>
+    </section>
+
+    <section class="card">
+      <h2>Feed</h2>
+      <p class="muted">The shared bSocial feed needs an indexer, which is not running yet. Your own posts are on chain now and will show up in the feed when it is.</p>
+    </section>
+  </div>
+
+  <script type="module">
+    import { WalletClient, Script, Utils } from 'https://cdn.jsdelivr.net/npm/@bsv/sdk@1.7.6/+esm'
+
+    // BRC-100, auto mode: XDM when framed inside bWalletX, otherwise window.CWI, otherwise a local wallet (localhost).
+    const wallet = new WalletClient('auto', location.host)
+    const USER_KEY = 'bwx_wallet_user'
+    const POSTS_KEY = 'bsocial_my_posts'
+    const B = '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut'
+    const MAP = '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5'
+
+    const $ = (id) => document.getElementById(id)
+    const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } }
+    const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} }
+    const short = (k) => `${k.slice(0, 6)}…${k.slice(-4)}`
+    const hex = (s) => Utils.toHex(Utils.toArray(s, 'utf8'))
+
+    function render() {
+      const user = read(USER_KEY, null)
+      $('signin').textContent = user ? `● ${short(user.identityKey)}` : 'Sign in with bWalletX'
+      $('signin').className = user ? 'ghost' : 'primary'
+      $('signin').title = user ? 'Signed in. Tap to sign out.' : ''
+      $('composer').classList.toggle('hidden', !user)
+      $('signed-out').classList.toggle('hidden', !!user)
+      if (user) $('who').textContent = `Posting as ${short(user.identityKey)}`
+      const posts = user ? read(POSTS_KEY, []).filter((p) => p.author === user.identityKey) : []
+      $('mine').innerHTML = ''
+      if (!posts.length) { $('mine').innerHTML = '<p class="muted">No posts yet.</p>'; return }
+      for (const p of posts) {
+        const el = document.createElement('div')
+        el.className = 'post'
+        const body = document.createElement('p'); body.textContent = p.text
+        const meta = document.createElement('div'); meta.className = 'muted'
+        const link = document.createElement('a')
+        link.href = `https://whatsonchain.com/tx/${encodeURIComponent(p.txid)}`
+        link.target = '_blank'; link.rel = 'noopener'; link.textContent = 'on chain'
+        meta.append(`${new Date(p.at).toLocaleString()} · `, link)
+        el.append(body, meta)
+        $('mine').append(el)
+      }
+    }
+
+    $('signin').addEventListener('click', async () => {
+      if (read(USER_KEY, null)) { localStorage.removeItem(USER_KEY); render(); return }
+      $('signin').disabled = true
+      try {
+        const { publicKey } = await wallet.getPublicKey({ identityKey: true })
+        write(USER_KEY, { identityKey: publicKey })
+      } catch (e) {
+        alert('No BRC-100 wallet found. Open bSocial in bWalletX.')
+      } finally {
+        $('signin').disabled = false
+        render()
+      }
+    })
+
+    $('post').addEventListener('click', async () => {
+      const user = read(USER_KEY, null)
+      const text = $('text').value.trim()
+      if (!user || !text) return
+      $('post').disabled = true
+      $('post-error').classList.add('hidden')
+      try {
+        // bSocial post: B (content) | MAP (app=bsocial, type=post). The wallet builds, signs, pays and broadcasts.
+        const asm = ['OP_0', 'OP_RETURN', hex(B), hex(text), hex('text/markdown'), hex('UTF-8'), hex('|'),
+          hex(MAP), hex('SET'), hex('app'), hex('bsocial'), hex('type'), hex('post')].join(' ')
+        const { txid } = await wallet.createAction({
+          description: 'Post to bSocial',
+          outputs: [{ lockingScript: Script.fromASM(asm).toHex(), satoshis: 0, outputDescription: 'bSocial post' }],
+          options: { randomizeOutputs: false }
+        })
+        if (!txid) throw new Error('The wallet did not broadcast the post')
+        const posts = read(POSTS_KEY, [])
+        posts.unshift({ txid, text, at: Date.now(), author: user.identityKey })
+        write(POSTS_KEY, posts.slice(0, 200))
+        $('text').value = ''
+      } catch (e) {
+        $('post-error').textContent = e?.message ? `Not posted: ${e.message}` : 'Not posted.'
+        $('post-error').classList.remove('hidden')
+      } finally {
+        $('post').disabled = false
+        render()
+      }
+    })
+
+    render()
+  </script>
 </body>
 </html>
